@@ -37,8 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core'
+
     'rest_framework',
+    'django_extensions',
+    'oauth2_provider',
+
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -68,6 +72,10 @@ TEMPLATES = [
         },
     },
 ]
+
+FIXTURE_DIRS = (
+   '/path/to/core/fixtures/',
+)
 
 WSGI_APPLICATION = 'fypedu.wsgi.application'
 
@@ -103,6 +111,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'core.User'
 
+REST_FRAMEWORK = { 
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication', 
+    ), 
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/

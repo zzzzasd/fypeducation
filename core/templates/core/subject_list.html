@@ -1,6 +1,10 @@
-<div>
-    <h1><a href="{% url 'subject_detail' pk=subject.pk %}">{{ subject.title }}</a></h1>
+{% extends 'core/base.html' %}
 
-    <a href="{% url 'subject_detail' pk=subject.pk %}">Lists: </a>
-
-</div>
+{% block content %}
+    <h1> This is subject list</h1>
+    {% for subject in subjects %}
+        <div>
+            <h1><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h1>
+        </div>
+    {% endfor %}
+{% endblock %}

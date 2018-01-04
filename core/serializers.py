@@ -1,18 +1,30 @@
 from rest_framework import serializers
-from core.models import User
+from .models import User
+from . models import Subject
 
-class UserSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    identity_number = serializers.IntegerField(required=True, unique=True)
-    first_name = serializers.CharField()
-    last_name = serializers.CharField()
 
-    def create(self, validated_data):
-        return User.objects.create(**validated_data)
+class SignUpSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('identity_number', 'password')
+        write_only_fields = ('password',)
 
-    def update(self, instance, validated_data)
-    instance.identity_number = validated_data.get('title', instance.title)
-    instance.first_name = validated_data.get('first_name', instance.first_name)
-    instance.last_name = validated_data.get('last_name', instance.last_name)
-    instance.save()
-    return instance
+class SignInSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('identity_number', 'password')
+        write_only_fields = ('password',)
+
+
+class SubjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subject
+        fields = ('title')
+
+
+class UserSerializer(serializers.ModelSerializer):
+    subjects = SubjectSerializer(many=True)
+
+    class Meta:
+        model = User
+        fields = ('identity_number', 'first_name', 'last_name', 'subjects')
