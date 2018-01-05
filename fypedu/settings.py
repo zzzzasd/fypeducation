@@ -109,6 +109,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_REDIRECT_URL = '/admin'
+
 AUTH_USER_MODEL = 'core.User'
 
 REST_FRAMEWORK = { 

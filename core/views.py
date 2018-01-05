@@ -7,12 +7,14 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from core.models import User
 from core.serializers import UserSerializer, SignUpSerializer, SignInSerializer
-from core.permissions import IsAuthenticatedOrCreate
 from rest_framework import generics
 from django.contrib.auth.decorators import login_required
 from .forms import SubjectForm
 from rest_framework.authentication import BasicAuthentication
 # Create your views here.
+from django.contrib.auth import get_user_model
+from rest_framework.permissions import AllowAny
+from rest_framework.generics import CreateAPIView
 
 
 def subject_list(request):
@@ -85,14 +87,7 @@ def user_detail(request, pk):
         return HttpResponse(status=204)
 
 
-class SignUp(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = SignUpSerializer
-    permission_classes = (IsAuthenticatedOrCreate,)
-
-class SignIn(generics.ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = SignInSerializer
-    authentication_classes = (BasicAuthentication,)
-
-
+class CreateUserView(CreateAPIView):
+    model = get_user_model()
+    permission_classes = (AllowAny,)
+    serializer_class = UserSerializer
