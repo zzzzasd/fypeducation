@@ -1,39 +1,39 @@
+from django.contrib.auth.models import Group
 from rest_framework import serializers
-from .models import User
-from .models import Subject
-from django.contrib.auth import get_user_model
 
-
-class SignUpSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('identity_number', 'password')
-        write_only_fields = ('password',)
-
-class SignInSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('identity_number', 'password')
-        write_only_fields = ('password',)
-
-
-class SubjectSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Subject
-        fields = ('title')
+from .models import User, Subject, List, Task
+from drf_writable_nested import WritableNestedModelSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
-    subjects = SubjectSerializer(many=True)
-    password = serializers.CharField(write_only=True)
-
-    def create(self, validated_data):
-        user = get_user_model().objects.create(
-            identity_number = validated_data['identity_number']
-        )
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
     class Meta:
-        model = get_user_model()
-        fields = ('identity_number', 'password', 'first_name', 'last_name', 'subjects')
+        model = User
+        fields = ['identity_number', 'first_name', 'last_name']
+
+
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+
+
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ['pk','title',]
+
+
+class ListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = List
+        fields = ['pk', 'title',]
+
+
+class SubjectSerializer(WritableNestedModelSerializer):
+    user_id = serializers.CharField(default=1)
+
+    lists = ListSerializer(many=True)
+
+    class Meta:
+        model = Subject
+        fields = ['pk','user_id','title', 'lists',]
+    

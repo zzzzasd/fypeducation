@@ -1,0 +1,24 @@
+from rest_framework import serializers
+from .models import Subject, List, Task
+from drf_writable_nested import WritableNestedModelSerializer
+
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ['pk','title',]
+
+
+class ListSerializer(WritableNestedModelSerializer):
+    tasks = TaskSerializer(many=True)
+    class Meta:
+        model = List
+        fields = ['pk','title','tasks',]
+
+
+class SubjectSerializer(WritableNestedModelSerializer):
+    lists = ListSerializer(many=True)
+
+    class Meta:
+        model = Subject
+        fields = ['pk','title', 'lists',]
+ 
