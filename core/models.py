@@ -2,6 +2,7 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.core.mail import send_mail
 from django.db import models
+import datetime
 
 from .managers import UserManager
 
@@ -32,9 +33,51 @@ class User(AbstractBaseUser, PermissionsMixin):
         return str(self.identity_number)
 
 
+class Classroom(models.Model):
+    id = models.AutoField(primary_key=True)
+    class_name= models.CharField(max_length = 20)
+    
+    def __str__(self):
+        return str(self.class_name)
+
+
+class Student(models.Model):
+    id = models.AutoField(primary_key=True, max_length=50, unique=True)
+    name = models.CharField(max_length = 56)
+    phone_number = models.CharField(max_length=15)
+    semester_average = models.CharField(max_length=10)
+    classroom = models.ForeignKey(Classroom, related_name='students', null=True, on_delete=models.SET_NULL)
+
+    class Meta:
+        db_table = 'students'
+
+    def __str__(self):
+        return str(self.name)
+
+
+class Attendance(models.Model):
+    ATTENDANCE_OUTCOME = (
+        ('present', 'Present'),
+        ('late', 'Late'),
+        ('absent', 'Absent'),
+    )
+    BEHAVIOR_OUTCOME = (
+        ('normal', 'Normal'),
+        ('problematic', 'Problematic'),
+    )
+    daily_attendance = models.CharField(max_length=20, choices=ATTENDANCE_OUTCOME)
+    behavior = models.CharField(max_length=15, choices=BEHAVIOR_OUTCOME, default='normal')
+    date = models.DateField()
+    students = models.ManyToManyField(Student)
+
+
+    def __str__(self):
+        return str(self.date)
+
+
 class Subject(models.Model):
     user = models.ForeignKey(
-        'core.User', related_name='subjects', on_delete=models.PROTECT)
+        'core.User', related_name='subjects', on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     
     def __str__(self):
@@ -42,7 +85,7 @@ class Subject(models.Model):
 
 
 class List(models.Model):
-    subject = models.ForeignKey('core.Subject', related_name= 'lists', on_delete=models.PROTECT)
+    subject = models.ForeignKey('core.Subject', related_name= 'lists', on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
 
     def __str__(self):
@@ -50,8 +93,10 @@ class List(models.Model):
 
 
 class Task(models.Model):
-    list = models.ForeignKey('core.List', related_name= 'tasks', on_delete=models.PROTECT)
+    lists = models.ForeignKey('core.List', related_name= 'tasks', on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
 
     def __str__(self):
         return self.title
+
+
