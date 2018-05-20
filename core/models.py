@@ -36,7 +36,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Classroom(models.Model):
     id = models.AutoField(primary_key=True)
     class_name= models.CharField(max_length = 20)
-    
+    students = models.ManyToManyField('Student', related_name='classroom_students')
+
     def __str__(self):
         return str(self.class_name)
 
@@ -46,7 +47,6 @@ class Student(models.Model):
     name = models.CharField(max_length = 56)
     phone_number = models.CharField(max_length=15)
     semester_average = models.CharField(max_length=10)
-    classroom = models.ForeignKey(Classroom, related_name='students', null=True, on_delete=models.SET_NULL)
 
     class Meta:
         db_table = 'students'
@@ -68,7 +68,10 @@ class Attendance(models.Model):
     daily_attendance = models.CharField(max_length=20, choices=ATTENDANCE_OUTCOME)
     behavior = models.CharField(max_length=15, choices=BEHAVIOR_OUTCOME, default='normal')
     date = models.DateField()
-    students = models.ManyToManyField(Student)
+    attendees = models.ForeignKey('Student', default="", on_delete="SET_NULL")
+        
+    # class Admin:
+    #     list_filter = ('classroom__student__name',)
 
 
     def __str__(self):
