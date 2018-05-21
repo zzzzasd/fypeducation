@@ -36,15 +36,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         return str(self.identity_number)
 
 
-class Classroom(models.Model):
-    id = models.AutoField(primary_key=True)
-    class_name= models.CharField(max_length = 20)
-    students = models.ManyToManyField('Student', related_name='classroom_students')
-
-    def __str__(self):
-        return str(self.class_name)
-
-
 class Student(models.Model):
     id = models.AutoField(primary_key=True, max_length=50, unique=True)
     name = models.CharField(max_length = 56)
@@ -56,6 +47,31 @@ class Student(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+
+class Classroom(models.Model):
+    id = models.AutoField(primary_key=True)
+    class_name= models.CharField(max_length = 20)
+    students = models.ManyToManyField('Student', through= 'StudClass', related_name='classroom_students')
+
+    def __str__(self):
+        return str(self.class_name)
+
+
+class StudClass(models.Model):
+    classroom = models.ForeignKey('Classroom', related_name= 'attendance_classroom', default="", on_delete="SET_NULL") 
+    student = models.ForeignKey('Student', related_name='attendance_students', on_delete="SET_NULL")
+    
+    ATTENDANCE_OUTCOME = (
+        ('present', 'Present'),
+        ('late', 'Late'),
+        ('absent', 'Absent'),
+    )
+    daily_attendance = models.CharField(max_length=20, choices=ATTENDANCE_OUTCOME)
+    date = models.DateField()
+
+    def __str__(self):
+        return str(self.date)
 
 
 class Attendance(models.Model):
@@ -71,17 +87,15 @@ class Attendance(models.Model):
     daily_attendance = models.CharField(max_length=20, choices=ATTENDANCE_OUTCOME)
     # behavior = models.CharField(max_length=15, choices=BEHAVIOR_OUTCOME, default='normal')
     date = models.DateField()
-    #classroom = models.ForeignKey('Classroom', related_name= 'attendance_classroom', default="", on_delete="SET_NULL") 
-    classrooms = models.ManyToManyField('Classroom', related_name='attendance_classrooms')
+
     
-    student = ChainedManyToManyField( 
-        Student,
-        horizontal=True,
-        verbose_name='student',
-        chained_field="classrooms",
-        chained_model_field="classrooms")
+    # student = ChainedManyToManyField( 
+    #     Student,
+    #     horizontal=True,
+    #     verbose_name='student',
+    #     chained_field="classrooms",
+    #     chained_model_field="classrooms")
     
-    #students = models.ManyToManyField('Student', related_name='attendance_students')
         
     # class Admin:
     #     list_filter = ('classroom__student__name',)

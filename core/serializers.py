@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Group
 from rest_framework import serializers
 
-from .models import User, Classroom, Student, Attendance, Subject, List, Task
+from .models import User, Classroom, Student, Attendance, Subject, List, Task, StudClass
 from drf_writable_nested import WritableNestedModelSerializer
 
 
@@ -12,9 +12,10 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class StudentSerializer(serializers.ModelSerializer):
+    # classroom = serializers.RelatedField(source='classroom.class_name', read_only=True)
     class Meta:
         model = Student
-        fields = ['id', 'name', 'phone_number', 'semester_average']
+        fields = ['id', 'name', 'phone_number', 'semester_average','classroom']
 
 
 class AttendanceSerializer(serializers.ModelSerializer):
@@ -26,11 +27,22 @@ class AttendanceSerializer(serializers.ModelSerializer):
 
 
 class ClassroomSerializer(serializers.ModelSerializer):
-    students = StudentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Classroom
-        fields = ['id', 'class_name', 'students']
+        fields = ['id', 'class_name']
+
+
+class StudClassSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.ReadOnlyField(source='classroom.id')
+    classroom = serializers.ReadOnlyField(source='classroom.class_name')
+    student = serializers.ReadOnlyField(source='student.name')
+
+    class Meta:
+        model = StudClass
+
+        fields = ('id', 'classroom', 'student',)
+
 
 
 class GroupSerializer(serializers.ModelSerializer):

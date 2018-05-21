@@ -3,7 +3,7 @@ from django.conf.urls import include, url
 from rest_framework import routers
 
 from . import views
-from .views import GroupViewSet, UserViewSet, ClassroomViewSet, StudentViewSet, AttendanceViewSet, SubjectViewSet
+from .views import GroupViewSet, UserViewSet, ClassroomViewSet, StudentViewSet, AttendanceViewSet, SubjectViewSet, StudClassViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -12,6 +12,7 @@ router.register(r'subjects', SubjectViewSet)
 router.register(r'classrooms', ClassroomViewSet)
 router.register(r'students', StudentViewSet)
 router.register(r'attendances', AttendanceViewSet)
+router.register(r'studclass', StudClassViewSet)
 
 
 
