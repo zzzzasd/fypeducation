@@ -21,6 +21,5 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^', include('core.urls')),
-    #path('api/', include('core.urls')),
-    #re_path('.*', TemplateView.as_view(template_name='index.html')),
+    url(r'^chaining/', include('smart_selects.urls')),
 ]

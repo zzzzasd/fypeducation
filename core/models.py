@@ -1,7 +1,10 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.core.mail import send_mail
+from smart_selects.db_fields import ChainedManyToManyField
 from django.db import models
+
+
 import datetime
 
 from .managers import UserManager
@@ -61,14 +64,24 @@ class Attendance(models.Model):
         ('late', 'Late'),
         ('absent', 'Absent'),
     )
-    BEHAVIOR_OUTCOME = (
-        ('normal', 'Normal'),
-        ('problematic', 'Problematic'),
-    )
+    # BEHAVIOR_OUTCOME = (
+    #     ('normal', 'Normal'),
+    #     ('problematic', 'Problematic'),
+    # )
     daily_attendance = models.CharField(max_length=20, choices=ATTENDANCE_OUTCOME)
-    behavior = models.CharField(max_length=15, choices=BEHAVIOR_OUTCOME, default='normal')
+    # behavior = models.CharField(max_length=15, choices=BEHAVIOR_OUTCOME, default='normal')
     date = models.DateField()
-    attendees = models.ForeignKey('Student', default="", on_delete="SET_NULL")
+    #classroom = models.ForeignKey('Classroom', related_name= 'attendance_classroom', default="", on_delete="SET_NULL") 
+    classrooms = models.ManyToManyField('Classroom', related_name='attendance_classrooms')
+    
+    student = ChainedManyToManyField( 
+        Student,
+        horizontal=True,
+        verbose_name='student',
+        chained_field="classrooms",
+        chained_model_field="classrooms")
+    
+    #students = models.ManyToManyField('Student', related_name='attendance_students')
         
     # class Admin:
     #     list_filter = ('classroom__student__name',)

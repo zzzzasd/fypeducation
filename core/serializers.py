@@ -17,21 +17,20 @@ class StudentSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'phone_number', 'semester_average']
 
 
+class AttendanceSerializer(serializers.ModelSerializer):
+    students = StudentSerializer(many=True, read_only=True)
+        
+    class Meta:
+        model = Attendance
+        fields = ['daily_attendance', 'date', 'students']
+
+
 class ClassroomSerializer(serializers.ModelSerializer):
     students = StudentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Classroom
         fields = ['id', 'class_name', 'students']
-
-class AttendanceSerializer(serializers.ModelSerializer):
-    students = StudentSerializer(many=True)
-        
-    class Meta:
-        model = Attendance
-        fields = ['daily_attendance', 'behavior', 'date', 'students']
-
-
 
 
 class GroupSerializer(serializers.ModelSerializer):
