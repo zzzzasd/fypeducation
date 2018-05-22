@@ -1,6 +1,7 @@
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.core.mail import send_mail
+from smart_selects.db_fields import ChainedForeignKey
 from smart_selects.db_fields import ChainedManyToManyField
 from django.db import models
 
@@ -36,12 +37,19 @@ class User(AbstractBaseUser, PermissionsMixin):
         return str(self.identity_number)
 
 
+class Classroom(models.Model):
+    class_id = models.AutoField(primary_key=True)
+    class_name= models.CharField(max_length = 20)
+    # students = models.ManyToManyField('Student', through= 'StudClass', related_name='classroom_students')
+    def __str__(self):
+        return str(self.class_name)
+
+
 class Student(models.Model):
-    id = models.AutoField(primary_key=True, max_length=50, unique=True)
     name = models.CharField(max_length = 56)
     phone_number = models.CharField(max_length=15)
     semester_average = models.CharField(max_length=10)
-
+    classroom = models.ForeignKey('core.Classroom', related_name='student_classroom',default = "", on_delete="SET_NULL")
     class Meta:
         db_table = 'students'
 
@@ -49,18 +57,14 @@ class Student(models.Model):
         return str(self.name)
 
 
-class Classroom(models.Model):
-    id = models.AutoField(primary_key=True)
-    class_name= models.CharField(max_length = 20)
-    students = models.ManyToManyField('Student', through= 'StudClass', related_name='classroom_students')
-
-    def __str__(self):
-        return str(self.class_name)
-
-
 class StudClass(models.Model):
-    classroom = models.ForeignKey('Classroom', related_name= 'attendance_classroom', default="", on_delete="SET_NULL") 
-    student = models.ForeignKey('Student', related_name='attendance_students', on_delete="SET_NULL")
+    studclass_id = models.AutoField(primary_key=True)
+    classroom = models.ForeignKey('core.Classroom', related_name= 'attendance_classroom', default="", on_delete="SET_NULL") 
+    student = ChainedForeignKey(
+        Student,
+        chained_field="classroom",
+        chained_model_field="classroom",)
+
     
     ATTENDANCE_OUTCOME = (
         ('present', 'Present'),

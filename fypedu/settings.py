@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'jquery',
     'oauth2_provider',
     'rest_framework',
     'django_extensions',
@@ -59,6 +60,8 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+USE_DJANGO_JQUERY = True
 
 ROOT_URLCONF = 'fypedu.urls'
 

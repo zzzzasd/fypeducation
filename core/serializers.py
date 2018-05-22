@@ -15,7 +15,7 @@ class StudentSerializer(serializers.ModelSerializer):
     # classroom = serializers.RelatedField(source='classroom.class_name', read_only=True)
     class Meta:
         model = Student
-        fields = ['id', 'name', 'phone_number', 'semester_average','classroom']
+        fields = ['id', 'name', 'phone_number', 'semester_average']
 
 
 class AttendanceSerializer(serializers.ModelSerializer):
@@ -41,7 +41,7 @@ class StudClassSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = StudClass
 
-        fields = ('id', 'classroom', 'student',)
+        fields = ('id', 'classroom', 'student', 'daily_attendance')
 
 
 
