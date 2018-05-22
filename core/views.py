@@ -3,8 +3,8 @@ from oauth2_provider.contrib.rest_framework import (TokenHasReadWriteScope,
                                                     TokenHasScope)
 from rest_framework import permissions, viewsets
 
-from .models import User, Subject, Classroom, Student, Attendance, StudClass
-from .serializers import GroupSerializer, UserSerializer, ClassroomSerializer, StudentSerializer, AttendanceSerializer, SubjectSerializer, StudClassSerializer
+from .models import User, Subject, Classroom, Student, StudClass
+from .serializers import GroupSerializer, UserSerializer, ClassroomSerializer, StudentSerializer, SubjectSerializer, StudClassSerializer
 
 
 # ViewSets define the view behavior.
@@ -29,11 +29,6 @@ class ClassroomViewSet(viewsets.ModelViewSet):
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
-
-
-class AttendanceViewSet(viewsets.ModelViewSet):
-    queryset = Attendance.objects.all()
-    serializer_class = AttendanceSerializer
 
 
 class StudClassViewSet(viewsets.ModelViewSet):

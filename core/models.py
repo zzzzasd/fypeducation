@@ -40,7 +40,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Classroom(models.Model):
     class_id = models.AutoField(primary_key=True)
     class_name= models.CharField(max_length = 20)
-    # students = models.ManyToManyField('Student', through= 'StudClass', related_name='classroom_students')
+    #students = models.ManyToManyField('Student', blank=True, null=True, related_name='classroom_students')
     def __str__(self):
         return str(self.class_name)
 
@@ -58,52 +58,19 @@ class Student(models.Model):
 
 
 class StudClass(models.Model):
-    studclass_id = models.AutoField(primary_key=True)
-    classroom = models.ForeignKey('core.Classroom', related_name= 'attendance_classroom', default="", on_delete="SET_NULL") 
-    student = ChainedForeignKey(
+    classroom = models.ForeignKey(Classroom, on_delete="SET_NULL")
+    student = ChainedManyToManyField(
         Student,
         chained_field="classroom",
-        chained_model_field="classroom",)
-
+        chained_model_field="classroom")
     
     ATTENDANCE_OUTCOME = (
         ('present', 'Present'),
         ('late', 'Late'),
         ('absent', 'Absent'),
     )
-    daily_attendance = models.CharField(max_length=20, choices=ATTENDANCE_OUTCOME)
+    daily_attendance = models.CharField(max_length=20, choices=ATTENDANCE_OUTCOME, default='absent')
     date = models.DateField()
-
-    def __str__(self):
-        return str(self.date)
-
-
-class Attendance(models.Model):
-    ATTENDANCE_OUTCOME = (
-        ('present', 'Present'),
-        ('late', 'Late'),
-        ('absent', 'Absent'),
-    )
-    # BEHAVIOR_OUTCOME = (
-    #     ('normal', 'Normal'),
-    #     ('problematic', 'Problematic'),
-    # )
-    daily_attendance = models.CharField(max_length=20, choices=ATTENDANCE_OUTCOME)
-    # behavior = models.CharField(max_length=15, choices=BEHAVIOR_OUTCOME, default='normal')
-    date = models.DateField()
-
-    
-    # student = ChainedManyToManyField( 
-    #     Student,
-    #     horizontal=True,
-    #     verbose_name='student',
-    #     chained_field="classrooms",
-    #     chained_model_field="classrooms")
-    
-        
-    # class Admin:
-    #     list_filter = ('classroom__student__name',)
-
 
     def __str__(self):
         return str(self.date)
