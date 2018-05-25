@@ -5,11 +5,9 @@ from smart_selects.db_fields import ChainedForeignKey
 from smart_selects.db_fields import ChainedManyToManyField
 from django.db import models
 
-
 import datetime
 
 from .managers import UserManager
-
 
 class User(AbstractBaseUser, PermissionsMixin):
     identity_number = models.IntegerField(unique=True)
@@ -75,7 +73,7 @@ class StudClass(models.Model):
     def __str__(self):
         return str(self.date)
 
-
+        
 class Subject(models.Model):
     user = models.ForeignKey(
         'core.User', related_name='subjects', on_delete=models.CASCADE)
