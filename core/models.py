@@ -38,18 +38,16 @@ class User(AbstractBaseUser, PermissionsMixin):
 class Classroom(models.Model):
     class_id = models.AutoField(primary_key=True)
     class_name= models.CharField(max_length = 20)
-    #students = models.ManyToManyField('Student', blank=True, null=True, related_name='classroom_students')
     def __str__(self):
         return str(self.class_name)
 
 
 class Student(models.Model):
+    student_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length = 56)
     phone_number = models.CharField(max_length=15)
     semester_average = models.CharField(max_length=10)
     classroom = models.ForeignKey('core.Classroom', related_name='student_classroom',default = "", on_delete="SET_NULL")
-    class Meta:
-        db_table = 'students'
 
     def __str__(self):
         return str(self.name)
@@ -73,7 +71,34 @@ class StudClass(models.Model):
     def __str__(self):
         return str(self.date)
 
-        
+
+class Grade (models.Model):
+    YEAR_OUTCOME = (
+        ('one', 'One'),
+        ('two', 'Two'),
+        ('three', 'Three'),
+        ('four', 'Four'),
+        ('five', 'Five'),        
+    )
+    TERM_OUTCOME = (
+        ('one', 'One'),
+        ('two', 'Two'),
+        ('three', 'Three'),
+    )
+
+    student = models.ForeignKey(Student, related_name='grade_student', default="", on_delete=models.CASCADE)
+    study_year = models.CharField(max_length=5, choices=YEAR_OUTCOME, default='one')
+    term = models.CharField (max_length=5, choices=TERM_OUTCOME, default='one')
+    geography = models.CharField(max_length=5,default="")
+    mathematics = models.CharField(max_length=5,default="")
+    english = models.CharField(max_length=5,default="")
+    malay = models.CharField(max_length=5,default="")
+    science = models.CharField(max_length=5,default="")
+
+    def __str__(self):
+        return str(self.student)
+
+
 class Subject(models.Model):
     user = models.ForeignKey(
         'core.User', related_name='subjects', on_delete=models.CASCADE)

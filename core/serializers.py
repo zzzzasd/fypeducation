@@ -8,7 +8,7 @@ from drf_writable_nested import WritableNestedModelSerializer
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['identity_number', 'first_name', 'last_name']
+        fields = ['identity_number', 'first_name', 'last_name', 'password']
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -30,10 +30,13 @@ class StudClassSerializer(serializers.ModelSerializer):
     classroom = serializers.ReadOnlyField(source='classroom.class_name')
     students = serializers.StringRelatedField(many=True, source='student')
 
+    def to_internal_value(self, value):
+        return value
+        
     class Meta:
         model = StudClass
 
-        fields = ('id', 'classroom', 'students', 'daily_attendance')
+        fields = ('id', 'classroom', 'students', 'daily_attendance', 'date')
 
 
 
